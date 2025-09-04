@@ -5,6 +5,8 @@ import com.loc.mychatapp.data.model.User
 import com.loc.mychatapp.data.service.AuthService
 import com.loc.mychatapp.data.service.ChatService
 import com.loc.mychatapp.data.service.UserService
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 class AuthRepository(private val service: AuthService) {
     fun register(email: String, pass: String, name: String, onResult: (Boolean) -> Unit) =
@@ -18,8 +20,13 @@ class AuthRepository(private val service: AuthService) {
 }
 
 class UserRepository(private val service: UserService) {
-    fun getAllUsers(onResult: (List<User>) -> Unit) = service.getAllUsers(onResult)
+    suspend fun getAllUsers(): List<User> = suspendCoroutine { cont ->
+        service.getAllUsers { users ->
+            cont.resume(users)
+        }
+    }
 }
+
 
 class ChatRepository(private val service: ChatService) {
     fun sendMessage(fromId: String, toId: String, text: String) = service.sendMessage(fromId, toId, text)

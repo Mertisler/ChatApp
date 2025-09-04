@@ -7,41 +7,47 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.compose.rememberNavController
+import com.loc.mychatapp.navigation.NavGraph
 import com.loc.mychatapp.ui.theme.MyChatAppTheme
+import com.loc.mychatapp.viewmodel.AuthViewModel
+import com.loc.mychatapp.viewmodel.ChatViewModel
+import com.loc.mychatapp.viewmodel.UserViewModel
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        // Factory'yi burada oluşturuyoruz. Stateless ise dışarıda oluşturmak gayet iyi.
+        val factory = AppViewModelFactory()
+
         setContent {
             MyChatAppTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
+                val navController = rememberNavController()
+
+                // viewModel() yalnızca Composable scope içinde çağrılmalı — bu yüzden setContent içinde.
+                val authViewModel: AuthViewModel = viewModel(factory = factory)
+                val userViewModel: UserViewModel = viewModel(factory = factory)
+                val chatViewModel: ChatViewModel = viewModel(factory = factory)
+
+                Scaffold(modifier = Modifier.fillMaxSize()) { paddingValues ->
+                    NavGraph(
+                        navController = navController,
+                        authViewModel = authViewModel,
+                        userViewModel = userViewModel,
+                        chatViewModel = chatViewModel,
+                        modifier = Modifier.padding(paddingValues)
                     )
                 }
+
+
+
+
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    MyChatAppTheme {
-        Greeting("Android")
     }
 }

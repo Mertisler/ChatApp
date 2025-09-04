@@ -30,6 +30,8 @@ import com.loc.mychatapp.data.model.User
 import com.loc.mychatapp.viewmodel.ChatViewModel
 import com.loc.mychatapp.viewmodel.UserViewModel
 
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+
 @Composable
 fun ChatScreen(
     chatViewModel: ChatViewModel,
@@ -37,7 +39,8 @@ fun ChatScreen(
     otherUserId: String
 ) {
     var text by remember { mutableStateOf("") }
-    val messages by chatViewModel.messages.observeAsState(emptyList())
+
+    val messages by chatViewModel.messages.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) { chatViewModel.startConversation(currentUserId, otherUserId) }
 

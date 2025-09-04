@@ -11,19 +11,21 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.loc.mychatapp.viewmodel.AuthViewModel
 
 @Composable
 fun ProfileScreen(authViewModel: AuthViewModel, onLogout: () -> Unit) {
-    val user by authViewModel.user.observeAsState()
 
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .padding(16.dp),
+    val user by authViewModel.user.collectAsStateWithLifecycle()
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {

@@ -1,6 +1,5 @@
 package com.loc.mychatapp.data.service
 
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.loc.mychatapp.data.model.User
 

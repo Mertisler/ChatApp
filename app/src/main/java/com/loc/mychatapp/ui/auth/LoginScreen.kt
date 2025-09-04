@@ -1,7 +1,6 @@
 package com.loc.mychatapp.ui.auth
 
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,6 +21,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.loc.mychatapp.viewmodel.AuthViewModel
 
 @Composable
@@ -33,9 +33,17 @@ fun LoginScreen(
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
+    // Flow ile kullanıcıyı gözlemle
+    val user by authViewModel.user.collectAsStateWithLifecycle()
+
+    LaunchedEffect(user) {
+        if (!user?.uid.isNullOrEmpty()) {
+            onLoginSuccess() // NavController'i tetikle
+        }
+    }
+
     Column(modifier = Modifier.padding(16.dp)) {
         Text("Giriş Yap", style = MaterialTheme.typography.headlineMedium)
-
         Spacer(Modifier.height(16.dp))
         TextField(value = email, onValueChange = { email = it }, label = { Text("Email") })
         Spacer(Modifier.height(8.dp))
@@ -45,18 +53,14 @@ fun LoginScreen(
             label = { Text("Şifre") },
             visualTransformation = PasswordVisualTransformation()
         )
-
         Spacer(Modifier.height(16.dp))
-        Button(onClick = {
-            authViewModel.login(email, password) { success ->
-                if (success) onLoginSuccess()
-            }
-        }) {
+        Button(onClick = { authViewModel.login(email, password) }) {
             Text("Giriş Yap")
         }
-
         TextButton(onClick = onNavigateToRegister) {
             Text("Hesabın yok mu? Kayıt ol")
         }
     }
 }
+
+
